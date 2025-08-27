@@ -26,9 +26,9 @@ Add ALL of these to your Railway web service:
 
 ```bash
 # Security Keys (CRITICAL)
-ENCRYPTION_KEY="zApjqkQOcXdf1q2EaJroT48/hTu1ke9xZq1aHmKvJ3u3Ax4q"
-WEBHOOK_SECRET_KEY="/MLtwr4VS2AxvHyFNHPdxb11gKZp4G9wKhwcICFWCQEeQbkQ"
-APP_SECRET_KEY="OaZcbutL5UN5RoucF9+q6TYNX2HiKMP3Mzh3Hi/0ZDY+c3ch"
+ENCRYPTION_KEY="Zemt0cQOioKXWJxhBjvNI8Govj3YQHfU0uWHjsoo6M/9OInm"
+WEBHOOK_SECRET_KEY="OoQz2nrNEyOXlj6AOOgbloOzL/ESKpjZ0c7yzbKEQdIod7Yp"
+APP_SECRET_KEY="PAVFqizT4yj1nLduqwnCiiIrDnsqSIEM8rPhwXsGX1i8nLba"
 
 # App Settings
 HOST="https://flowndly-main-production-4793.up.railway.app/"
