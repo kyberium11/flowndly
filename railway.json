@@ -50,13 +50,23 @@
       "name": "flowndly-postgres",
       "type": "database",
       "databaseType": "postgresql",
-      "version": "14"
+      "version": "14",
+      "environments": {
+        "production": {
+          "variables": {}
+        }
+      }
     },
     {
       "name": "flowndly-redis",
       "type": "database",
       "databaseType": "redis",
-      "version": "7.0"
+      "version": "7.0",
+      "environments": {
+        "production": {
+          "variables": {}
+        }
+      }
     }
   ]
 }
