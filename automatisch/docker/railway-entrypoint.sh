@@ -68,7 +68,9 @@ if [ -n "$DATABASE_URL" ]; then
   export POSTGRES_DATABASE=$DB_NAME
   export POSTGRES_USERNAME=$DB_USER
   export POSTGRES_PASSWORD=$DB_PASS
-  export POSTGRES_ENABLE_SSL=true
+  # Disable SSL for Railway internal connections
+  export POSTGRES_ENABLE_SSL=false
+  echo "🔍 Disabled SSL for Railway internal database connection"
 else
   echo "⚠️ No DATABASE_URL found, using individual POSTGRES_* variables"
 fi
@@ -109,6 +111,7 @@ echo "🔍 Final configuration:"
 echo "🔍 POSTGRES_HOST: $POSTGRES_HOST"
 echo "🔍 POSTGRES_PORT: $POSTGRES_PORT"
 echo "🔍 POSTGRES_DATABASE: $POSTGRES_DATABASE"
+echo "🔍 POSTGRES_ENABLE_SSL: $POSTGRES_ENABLE_SSL"
 echo "🔍 REDIS_HOST: $REDIS_HOST"
 echo "🔍 REDIS_PORT: $REDIS_PORT"
 
