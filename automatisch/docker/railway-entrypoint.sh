@@ -50,17 +50,6 @@ fi
 if [ -n "$DATABASE_URL" ]; then
   echo "🔍 Parsing DATABASE_URL: $DATABASE_URL"
   
-  # Modify DATABASE_URL to explicitly disable SSL
-  if [[ "$DATABASE_URL" == *"postgresql://"* ]]; then
-    # Add ?sslmode=disable to the DATABASE_URL
-    if [[ "$DATABASE_URL" == *"?"* ]]; then
-      export DATABASE_URL="${DATABASE_URL}&sslmode=disable"
-    else
-      export DATABASE_URL="${DATABASE_URL}?sslmode=disable"
-    fi
-    echo "🔍 Modified DATABASE_URL to disable SSL: $DATABASE_URL"
-  fi
-  
   # Extract components from DATABASE_URL
   # Format: postgresql://username:password@host:port/database
   DB_HOST=$(echo $DATABASE_URL | sed -n 's/.*@\([^:]*\).*/\1/p')
@@ -80,14 +69,14 @@ if [ -n "$DATABASE_URL" ]; then
   export POSTGRES_DATABASE=$DB_NAME
   export POSTGRES_USERNAME=$DB_USER
   export POSTGRES_PASSWORD=$DB_PASS
-  # Explicitly disable SSL for Railway internal connections
-  export POSTGRES_ENABLE_SSL=false
-  echo "🔍 Disabled SSL for Railway internal database connection"
+  # Enable SSL with certificate trust for Railway internal connections
+  export POSTGRES_ENABLE_SSL=true
+  echo "🔍 Enabled SSL with certificate trust for Railway internal database connection"
   echo "🔍 POSTGRES_ENABLE_SSL set to: $POSTGRES_ENABLE_SSL"
 else
   echo "⚠️ No DATABASE_URL found, using individual POSTGRES_* variables"
-  # Still disable SSL for Railway
-  export POSTGRES_ENABLE_SSL=false
+  # Enable SSL for Railway
+  export POSTGRES_ENABLE_SSL=true
 fi
 
 # Set Redis configuration

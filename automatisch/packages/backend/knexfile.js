@@ -14,10 +14,12 @@ if (appConfig.postgresEnableSsl) {
   };
 }
 
-// For Railway deployments, always disable SSL for internal connections
+// For Railway deployments, configure SSL to trust internal certificates
 if (process.env.APP_ENV === 'production' && process.env.DATABASE_URL) {
-  sslConfig = false;
-  console.log('🔍 Railway production detected - disabling SSL for internal database connection');
+  sslConfig = {
+    rejectUnauthorized: false // Trust Railway's internal self-signed certificates
+  };
+  console.log('🔍 Railway production detected - configuring SSL to trust internal certificates');
 }
 
 const knexConfig = {
