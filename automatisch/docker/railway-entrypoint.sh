@@ -49,11 +49,23 @@ fi
 # Parse DATABASE_URL if provided by Railway
 if [ -n "$DATABASE_URL" ]; then
   echo "🔍 Parsing DATABASE_URL: $DATABASE_URL"
+  
+  # Modify DATABASE_URL to explicitly disable SSL
+  if [[ "$DATABASE_URL" == *"postgresql://"* ]]; then
+    # Add ?sslmode=disable to the DATABASE_URL
+    if [[ "$DATABASE_URL" == *"?"* ]]; then
+      export DATABASE_URL="${DATABASE_URL}&sslmode=disable"
+    else
+      export DATABASE_URL="${DATABASE_URL}?sslmode=disable"
+    fi
+    echo "🔍 Modified DATABASE_URL to disable SSL: $DATABASE_URL"
+  fi
+  
   # Extract components from DATABASE_URL
   # Format: postgresql://username:password@host:port/database
   DB_HOST=$(echo $DATABASE_URL | sed -n 's/.*@\([^:]*\).*/\1/p')
   DB_PORT=$(echo $DATABASE_URL | sed -n 's/.*:\([0-9]*\)\/.*/\1/p')
-  DB_NAME=$(echo $DATABASE_URL | sed -n 's/.*\///p')
+  DB_NAME=$(echo $DATABASE_URL | sed -n 's/.*\///p' | sed 's/?.*//')
   DB_USER=$(echo $DATABASE_URL | sed -n 's/.*:\/\/\([^:]*\):.*/\1/p')
   DB_PASS=$(echo $DATABASE_URL | sed -n 's/.*:\/\/[^:]*:\([^@]*\)@.*/\1/p')
   

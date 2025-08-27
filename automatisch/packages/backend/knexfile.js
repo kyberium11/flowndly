@@ -14,6 +14,12 @@ if (appConfig.postgresEnableSsl) {
   };
 }
 
+// For Railway deployments, always disable SSL for internal connections
+if (process.env.APP_ENV === 'production' && process.env.DATABASE_URL) {
+  sslConfig = false;
+  console.log('🔍 Railway production detected - disabling SSL for internal database connection');
+}
+
 const knexConfig = {
   client: 'pg',
   connection: {
@@ -37,5 +43,9 @@ const knexConfig = {
   },
   ...(appConfig.isTest ? knexSnakeCaseMappers() : {}),
 };
+
+console.log('🔍 Knex SSL configuration:', sslConfig);
+console.log('🔍 Database host:', appConfig.postgresHost);
+console.log('🔍 Database port:', appConfig.postgresPort);
 
 export default knexConfig;
