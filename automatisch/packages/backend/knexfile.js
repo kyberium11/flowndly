@@ -6,6 +6,14 @@ import { fileURLToPath } from 'url';
 const fileExtension = 'js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// Configure SSL based on environment
+let sslConfig = false;
+if (appConfig.postgresEnableSsl) {
+  sslConfig = {
+    rejectUnauthorized: false // Allow self-signed certificates
+  };
+}
+
 const knexConfig = {
   client: 'pg',
   connection: {
@@ -14,7 +22,7 @@ const knexConfig = {
     user: appConfig.postgresUsername,
     password: appConfig.postgresPassword,
     database: appConfig.postgresDatabase,
-    ssl: appConfig.postgresEnableSsl,
+    ssl: sslConfig,
   },
   asyncStackTraces: appConfig.isDev,
   searchPath: [appConfig.postgresSchema],
