@@ -7,6 +7,33 @@ echo "Current directory: $(pwd)"
 echo "Available environment variables:"
 env | grep -E "(DATABASE_URL|REDIS_URL|POSTGRES_|REDIS_|APP_|WORKER)" || echo "No relevant env vars found"
 
+# Check for required environment variables
+if [ -z "$DATABASE_URL" ] && [ -z "$POSTGRES_HOST" ]; then
+  echo "❌ ERROR: DATABASE_URL or POSTGRES_HOST is required!"
+  echo "Please add DATABASE_URL to your Railway environment variables."
+  echo "You can find this in your PostgreSQL service variables."
+  exit 1
+fi
+
+if [ -z "$REDIS_URL" ] && [ -z "$REDIS_HOST" ]; then
+  echo "❌ ERROR: REDIS_URL or REDIS_HOST is required!"
+  echo "Please add REDIS_URL to your Railway environment variables."
+  echo "You can find this in your Redis service variables."
+  exit 1
+fi
+
+if [ -z "$ENCRYPTION_KEY" ]; then
+  echo "❌ ERROR: ENCRYPTION_KEY is required!"
+  echo "Please add ENCRYPTION_KEY to your Railway environment variables."
+  exit 1
+fi
+
+if [ -z "$WEBHOOK_SECRET_KEY" ]; then
+  echo "❌ ERROR: WEBHOOK_SECRET_KEY is required!"
+  echo "Please add WEBHOOK_SECRET_KEY to your Railway environment variables."
+  exit 1
+fi
+
 # Parse DATABASE_URL if provided by Railway
 if [ -n "$DATABASE_URL" ]; then
   echo "🔍 Parsing DATABASE_URL: $DATABASE_URL"
@@ -31,72 +58,45 @@ if [ -n "$DATABASE_URL" ]; then
   export POSTGRES_PASSWORD=$DB_PASS
   export POSTGRES_ENABLE_SSL=true
 else
-  echo "⚠️ No DATABASE_URL found!"
+  echo "⚠️ No DATABASE_URL found, using individual POSTGRES_* variables"
 fi
 
 # Set Redis configuration
-# Use the Railway-provided Redis variables
-if [ -n "$REDISHOST" ] && [ -n "$REDISPORT" ]; then
+if [ -n "$REDIS_URL" ]; then
+  echo "🔍 Parsing REDIS_URL: $REDIS_URL"
+  # Extract Redis components
+  REDIS_HOST=$(echo $REDIS_URL | sed -n 's/.*@\([^:]*\).*/\1/p')
+  REDIS_PORT=$(echo $REDIS_URL | sed -n 's/.*:\([0-9]*\)$/\1/p')
+  REDIS_PASSWORD=$(echo $REDIS_URL | sed -n 's/.*:\/\/[^:]*:\([^@]*\)@.*/\1/p')
+  
+  export REDIS_HOST=$REDIS_HOST
+  export REDIS_PORT=$REDIS_PORT
+  if [ -n "$REDIS_PASSWORD" ]; then
+    export REDIS_PASSWORD=$REDIS_PASSWORD
+  fi
+elif [ -n "$REDISHOST" ] && [ -n "$REDISPORT" ]; then
   echo "🔍 Using Railway Redis configuration:"
   echo "🔍 REDISHOST: $REDISHOST"
   echo "🔍 REDISPORT: $REDISPORT"
   
-  # Try multiple hostname formats for Railway internal networking
-  if [ "$REDISHOST" = "flowndly-redis.railway.internal" ]; then
-    echo "⚠️ Detected internal Railway hostname, trying multiple alternatives..."
-    
-    # Try different hostname formats
-    echo "🔍 Testing hostname resolution..."
-    
-    # Option 1: Service name only (internal communication)
-    if nslookup flowndly-redis >/dev/null 2>&1; then
-      export REDIS_HOST="flowndly-redis"
-      echo "✅ Using REDIS_HOST: flowndly-redis (internal service)"
-    # Option 2: Use the original internal hostname
-    elif nslookup flowndly-redis.railway.internal >/dev/null 2>&1; then
-      export REDIS_HOST="flowndly-redis.railway.internal"
-      echo "✅ Using REDIS_HOST: flowndly-redis.railway.internal (internal)"
-    # Option 3: Try with .railway.app (external, should be last resort)
-    elif nslookup flowndly-redis.railway.app >/dev/null 2>&1; then
-      export REDIS_HOST="flowndly-redis.railway.app"
-      echo "⚠️ Using REDIS_HOST: flowndly-redis.railway.app (external fallback)"
-    # Option 4: Use service name anyway (Railway internal networking)
-    else
-      export REDIS_HOST="flowndly-redis"
-      echo "⚠️ Using REDIS_HOST: flowndly-redis (service name fallback)"
-    fi
-  else
-    export REDIS_HOST=$REDISHOST
-    echo "🔍 Using provided REDIS_HOST: $REDIS_HOST"
-  fi
-  
+  export REDIS_HOST=$REDISHOST
   export REDIS_PORT=$REDISPORT
   if [ -n "$REDIS_PASSWORD" ]; then
     echo "🔍 REDIS_PASSWORD: [hidden]"
     export REDIS_PASSWORD=$REDIS_PASSWORD
-  fi
-  
-  echo "🔍 Final Redis configuration:"
-  echo "🔍 REDIS_HOST: $REDIS_HOST"
-  echo "🔍 REDIS_PORT: $REDIS_PORT"
-  echo "🔍 REDIS_PASSWORD: [set]"
-  
-  # Test the connection
-  echo "🔍 Testing Redis connection..."
-  if command -v redis-cli >/dev/null 2>&1; then
-    if redis-cli -h "$REDIS_HOST" -p "$REDIS_PORT" ping >/dev/null 2>&1; then
-      echo "✅ Redis connection successful!"
-    else
-      echo "⚠️ Redis connection test failed, but continuing..."
-    fi
-  else
-    echo "⚠️ redis-cli not available, skipping connection test"
   fi
 else
   echo "⚠️ No Railway Redis configuration found, using defaults"
   export REDIS_HOST=127.0.0.1
   export REDIS_PORT=6379
 fi
+
+echo "🔍 Final configuration:"
+echo "🔍 POSTGRES_HOST: $POSTGRES_HOST"
+echo "🔍 POSTGRES_PORT: $POSTGRES_PORT"
+echo "🔍 POSTGRES_DATABASE: $POSTGRES_DATABASE"
+echo "🔍 REDIS_HOST: $REDIS_HOST"
+echo "🔍 REDIS_PORT: $REDIS_PORT"
 
 cd packages/backend
 
