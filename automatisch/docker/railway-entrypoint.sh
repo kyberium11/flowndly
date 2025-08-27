@@ -7,6 +7,18 @@ echo "Current directory: $(pwd)"
 echo "Available environment variables:"
 env | grep -E "(DATABASE_URL|REDIS_URL|POSTGRES_|REDIS_|APP_|WORKER)" || echo "No relevant env vars found"
 
+# Function to resolve Railway variable substitution
+resolve_railway_var() {
+    local var_value="$1"
+    if [[ "$var_value" == *"\${{"* ]]; then
+        # Extract the actual variable name from Railway substitution
+        local actual_var=$(echo "$var_value" | sed 's/\${{[^}]*\.//' | sed 's/}}//')
+        echo "$actual_var"
+    else
+        echo "$var_value"
+    fi
+}
+
 # Check for required environment variables
 if [ -z "$DATABASE_URL" ] && [ -z "$POSTGRES_HOST" ]; then
   echo "❌ ERROR: DATABASE_URL or POSTGRES_HOST is required!"
@@ -15,9 +27,9 @@ if [ -z "$DATABASE_URL" ] && [ -z "$POSTGRES_HOST" ]; then
   exit 1
 fi
 
-if [ -z "$REDIS_URL" ] && [ -z "$REDIS_HOST" ]; then
-  echo "❌ ERROR: REDIS_URL or REDIS_HOST is required!"
-  echo "Please add REDIS_URL to your Railway environment variables."
+if [ -z "$REDIS_URL" ] && [ -z "$REDIS_HOST" ] && [ -z "$REDISHOST" ]; then
+  echo "❌ ERROR: REDIS_URL, REDIS_HOST, or REDISHOST is required!"
+  echo "Please add Redis connection variables to your Railway environment variables."
   echo "You can find this in your Redis service variables."
   exit 1
 fi
@@ -74,13 +86,15 @@ if [ -n "$REDIS_URL" ]; then
   if [ -n "$REDIS_PASSWORD" ]; then
     export REDIS_PASSWORD=$REDIS_PASSWORD
   fi
-elif [ -n "$REDISHOST" ] && [ -n "$REDISPORT" ]; then
+elif [ -n "$REDISHOST" ]; then
   echo "🔍 Using Railway Redis configuration:"
   echo "🔍 REDISHOST: $REDISHOST"
-  echo "🔍 REDISPORT: $REDISPORT"
   
   export REDIS_HOST=$REDISHOST
-  export REDIS_PORT=$REDISPORT
+  # Use default Redis port if not specified
+  export REDIS_PORT=${REDISPORT:-6379}
+  echo "🔍 REDIS_PORT: $REDIS_PORT"
+  
   if [ -n "$REDIS_PASSWORD" ]; then
     echo "🔍 REDIS_PASSWORD: [hidden]"
     export REDIS_PASSWORD=$REDIS_PASSWORD
