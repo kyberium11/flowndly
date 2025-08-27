@@ -3,7 +3,7 @@
   "name": "flowndly",
   "builds": [
     {
-      "src": "vercel-server.js",
+      "src": "api/index.js",
       "use": "@vercel/node"
     },
     {
@@ -17,12 +17,8 @@
       "dest": "api/cron.js"
     },
     {
-      "src": "/api/(.*)",
-      "dest": "vercel-server.js"
-    },
-    {
       "src": "/(.*)",
-      "dest": "vercel-server.js"
+      "dest": "api/index.js"
     }
   ],
   "env": {
