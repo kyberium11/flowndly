@@ -2,7 +2,8 @@
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "DOCKERFILE",
-    "dockerfilePath": "docker/Dockerfile"
+    "dockerfilePath": "docker/Dockerfile",
+    "rootDirectory": "."
   },
   "deploy": {
     "startCommand": "sh /railway-entrypoint.sh",
@@ -27,6 +28,7 @@
       "name": "flowndly-web",
       "type": "web",
       "dockerfilePath": "docker/Dockerfile",
+      "rootDirectory": ".",
       "startCommand": "sh /railway-entrypoint.sh",
       "restartPolicyType": "ON_FAILURE",
       "restartPolicyMaxRetries": 10,
