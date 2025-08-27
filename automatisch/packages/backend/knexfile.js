@@ -8,18 +8,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Configure SSL based on environment
 let sslConfig = false;
-if (appConfig.postgresEnableSsl) {
+
+// For Railway deployments, completely disable SSL for internal connections
+if (process.env.APP_ENV === 'production' && process.env.DATABASE_URL) {
+  sslConfig = false;
+  console.log('🔍 Railway production detected - completely disabling SSL for internal database connection');
+} else if (appConfig.postgresEnableSsl) {
   sslConfig = {
     rejectUnauthorized: false // Allow self-signed certificates
   };
-}
-
-// For Railway deployments, configure SSL to trust internal certificates
-if (process.env.APP_ENV === 'production' && process.env.DATABASE_URL) {
-  sslConfig = {
-    rejectUnauthorized: false // Trust Railway's internal self-signed certificates
-  };
-  console.log('🔍 Railway production detected - configuring SSL to trust internal certificates');
 }
 
 const knexConfig = {

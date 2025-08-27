@@ -15,9 +15,9 @@ WEBHOOK_SECRET_KEY="/MLtwr4VS2AxvHyFNHPdxb11gKZp4G9wKhwcICFWCQEeQbkQ"
 REDISPORT="6379"
 ```
 
-### **SSL Configuration (UPDATED)**
+### **SSL Configuration (CRITICAL)**
 ```bash
-POSTGRES_ENABLE_SSL="true"
+POSTGRES_ENABLE_SSL="false"
 ```
 
 ## 📋 **Complete Railway Environment Variables**
@@ -42,8 +42,8 @@ TELEMETRY_ENABLED="false"
 DATABASE_URL="${{flowndly-database.DATABASE_URL}}"
 POSTGRES_PASSWORD="${{flowndly-database.POSTGRES_PASSWORD}}"
 
-# Database SSL Configuration (UPDATED)
-POSTGRES_ENABLE_SSL="true"
+# Database SSL Configuration (CRITICAL)
+POSTGRES_ENABLE_SSL="false"
 
 # Redis (Railway auto-provides these)
 REDISHOST="${{flowndly-redis.REDISHOST}}"
@@ -60,17 +60,17 @@ REDISPORT="6379"
 
 ## ⚠️ **Important Notes**
 
-- **POSTGRES_ENABLE_SSL="true"** - This enables SSL with proper certificate trust for Railway's internal certificates
+- **POSTGRES_ENABLE_SSL="false"** - This completely disables SSL for Railway internal connections to fix the certificate error
 - **ENCRYPTION_KEY** and **WEBHOOK_SECRET_KEY** are required for the app to start
 - **REDISPORT** is needed for Redis connection
 - All other variables should be auto-provided by Railway
 
 ## 🔒 **SSL Configuration**
 
-Based on [Railway's official recommendation](https://station.railway.com/questions/error-self-signed-certificate-with-bett-70c003a4), the application is now configured to:
-- **Enable SSL** for secure connections
-- **Trust Railway's internal self-signed certificates** using `rejectUnauthorized: false`
-- **Maintain security** while working with Railway's infrastructure
+Due to persistent SSL certificate issues with Railway's internal connections, the application is now configured to:
+- **Completely disable SSL** for Railway internal database connections
+- **Bypass certificate validation** to resolve the self-signed certificate error
+- **Maintain functionality** while working with Railway's infrastructure
 
 ## 🎯 **After Adding Variables**
 
