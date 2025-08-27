@@ -222,6 +222,63 @@ fi
 
 echo ""
 echo "🔍 ========================================="
+echo "🔍 AUTOMATIC RAILWAY SERVICE DETECTION"
+echo "🔍 ========================================="
+
+# Auto-detect Railway services and set connection variables
+echo "🔍 Detecting Railway services..."
+
+# Auto-set HOST if not provided
+if [ -z "$HOST" ] && [ -n "$RAILWAY_PUBLIC_DOMAIN" ]; then
+  export HOST=$RAILWAY_PUBLIC_DOMAIN
+  echo "🔍 Auto-set HOST: $HOST"
+fi
+
+# Auto-detect Railway services and set connection variables
+echo "🔍 Detecting Railway services..."
+
+# Check for Railway service URLs
+if [ -n "$RAILWAY_SERVICE_FLOWNDLY_DATABASE_URL" ]; then
+  echo "✅ Found flowndly-database service"
+  DB_SERVICE_HOST=$(echo $RAILWAY_SERVICE_FLOWNDLY_DATABASE_URL | sed 's/.*@//' | sed 's/:.*//')
+  echo "🔍 Database host: $DB_SERVICE_HOST"
+  
+  # Set database connection variables
+  if [ -z "$DATABASE_URL" ]; then
+    export DATABASE_URL="postgresql://postgres:Jf}M#d5en@zz8a0hkaGZ)RN2U9(0$u]/@${DB_SERVICE_HOST}:5432/railway"
+    echo "🔍 Auto-generated DATABASE_URL"
+  fi
+  
+  if [ -z "$POSTGRES_HOST" ]; then
+    export POSTGRES_HOST=$DB_SERVICE_HOST
+    echo "🔍 Auto-set POSTGRES_HOST: $POSTGRES_HOST"
+  fi
+fi
+
+if [ -n "$RAILWAY_SERVICE_FLOWNDLY_REDIS_URL" ]; then
+  echo "✅ Found flowndly-redis service"
+  REDIS_SERVICE_HOST=$(echo $RAILWAY_SERVICE_FLOWNDLY_REDIS_URL | sed 's/.*@//' | sed 's/:.*//')
+  echo "🔍 Redis host: $REDIS_SERVICE_HOST"
+  
+  # Set Redis connection variables
+  if [ -z "$REDIS_URL" ]; then
+    export REDIS_URL="redis://default:)z(pul-j?w]rgrzA03r-gMcIx]GM1eB^@${REDIS_SERVICE_HOST}:6379"
+    echo "🔍 Auto-generated REDIS_URL"
+  fi
+  
+  if [ -z "$REDIS_HOST" ]; then
+    export REDIS_HOST=$REDIS_SERVICE_HOST
+    echo "🔍 Auto-set REDIS_HOST: $REDIS_HOST"
+  fi
+  
+  if [ -z "$REDISHOST" ]; then
+    export REDISHOST=$REDIS_SERVICE_HOST
+    echo "🔍 Auto-set REDISHOST: $REDISHOST"
+  fi
+fi
+
+echo ""
+echo "🔍 ========================================="
 echo "🔍 REDIS CONFIGURATION"
 echo "🔍 ========================================="
 
@@ -335,7 +392,7 @@ fi
 echo ""
 echo "🔍 ========================================="
 echo "🔍 NODE MODULES CHECK"
-echo "🔍 ========================================="
+echo "🔍 =============h============================"
 if [ -d "node_modules" ]; then
   echo "✅ node_modules directory exists"
   echo "📦 Number of packages: $(find node_modules -maxdepth 1 -type d | wc -l)"
