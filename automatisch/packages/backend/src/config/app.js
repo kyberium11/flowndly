@@ -6,9 +6,17 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+console.log('🔍 =========================================');
+console.log('🔍 LOADING APP CONFIGURATION');
+console.log('🔍 =========================================');
+console.log('🔍 APP_ENV:', process.env.APP_ENV);
+console.log('🔍 Current working directory:', process.cwd());
+
 if (process.env.APP_ENV === 'test') {
+  console.log('🔍 Loading test environment from .env.test');
   dotenv.config({ path: path.resolve(__dirname, '../../.env.test') });
 } else {
+  console.log('🔍 Loading environment from .env file');
   dotenv.config();
 }
 
@@ -112,12 +120,60 @@ const appConfig = {
   noProxy: process.env.no_proxy,
 };
 
+console.log('🔍 =========================================');
+console.log('🔍 APP CONFIGURATION SUMMARY');
+console.log('🔍 =========================================');
+console.log('🔍 Environment:', appConfig.appEnv);
+console.log('🔍 Host:', appConfig.host);
+console.log('🔍 Protocol:', appConfig.protocol);
+console.log('🔍 Port:', appConfig.port);
+console.log('🔍 Base URL:', appConfig.baseUrl);
+console.log('🔍 Web App URL:', appConfig.webAppUrl);
+console.log('🔍 Webhook URL:', appConfig.webhookUrl);
+console.log('🔍 Log Level:', appConfig.logLevel);
+console.log('🔍 Is Development:', appConfig.isDev);
+console.log('🔍 Is Production:', appConfig.isProd);
+console.log('🔍 Is Test:', appConfig.isTest);
+
+console.log('🔍 =========================================');
+console.log('🔍 DATABASE CONFIGURATION');
+console.log('🔍 =========================================');
+console.log('🔍 PostgreSQL Host:', appConfig.postgresHost);
+console.log('🔍 PostgreSQL Port:', appConfig.postgresPort);
+console.log('🔍 PostgreSQL Database:', appConfig.postgresDatabase);
+console.log('🔍 PostgreSQL Username:', appConfig.postgresUsername);
+console.log('🔍 PostgreSQL Password:', appConfig.postgresPassword ? '[SET]' : '[NOT SET]');
+console.log('🔍 PostgreSQL Enable SSL:', appConfig.postgresEnableSsl);
+console.log('🔍 PostgreSQL Schema:', appConfig.postgresSchema);
+
+console.log('🔍 =========================================');
+console.log('🔍 REDIS CONFIGURATION');
+console.log('🔍 =========================================');
+console.log('🔍 Redis Host:', appConfig.redisHost);
+console.log('🔍 Redis Port:', appConfig.redisPort);
+console.log('🔍 Redis Password:', appConfig.redisPassword ? '[SET]' : '[NOT SET]');
+console.log('🔍 Redis Username:', appConfig.redisUsername || '[NOT SET]');
+console.log('🔍 Redis Database:', appConfig.redisDb);
+console.log('🔍 Redis TLS:', appConfig.redisTls);
+
+console.log('🔍 =========================================');
+console.log('🔍 SECURITY CONFIGURATION');
+console.log('🔍 =========================================');
+console.log('🔍 Encryption Key:', appConfig.encryptionKey ? '[SET]' : '[NOT SET]');
+console.log('🔍 Webhook Secret Key:', appConfig.webhookSecretKey ? '[SET]' : '[NOT SET]');
+console.log('🔍 App Secret Key:', appConfig.appSecretKey ? '[SET]' : '[NOT SET]');
+
 if (!appConfig.encryptionKey) {
+  console.log('❌ ERROR: ENCRYPTION_KEY environment variable needs to be set!');
   throw new Error('ENCRYPTION_KEY environment variable needs to be set!');
 }
 
 if (!appConfig.webhookSecretKey) {
+  console.log('❌ ERROR: WEBHOOK_SECRET_KEY environment variable needs to be set!');
   throw new Error('WEBHOOK_SECRET_KEY environment variable needs to be set!');
 }
+
+console.log('✅ All required environment variables are set');
+console.log('🔍 =========================================');
 
 export default appConfig;

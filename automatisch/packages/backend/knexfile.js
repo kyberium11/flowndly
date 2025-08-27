@@ -6,6 +6,13 @@ import { fileURLToPath } from 'url';
 const fileExtension = 'js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+console.log('🔍 =========================================');
+console.log('🔍 KNEX DATABASE CONFIGURATION');
+console.log('🔍 =========================================');
+console.log('🔍 Environment:', process.env.APP_ENV);
+console.log('🔍 DATABASE_URL present:', !!process.env.DATABASE_URL);
+console.log('🔍 appConfig.postgresEnableSsl:', appConfig.postgresEnableSsl);
+
 // Configure SSL based on environment
 let sslConfig = false;
 
@@ -15,11 +22,17 @@ if (process.env.APP_ENV === 'production' && process.env.DATABASE_URL) {
     rejectUnauthorized: false // Official Railway solution for self-signed certificates
   };
   console.log('🔍 Railway production detected - using ssl: { rejectUnauthorized: false }');
+  console.log('🔍 This is the official Railway solution for self-signed certificates');
 } else if (appConfig.postgresEnableSsl) {
   sslConfig = {
     rejectUnauthorized: false // Allow self-signed certificates
   };
+  console.log('🔍 SSL enabled with rejectUnauthorized: false for local/other environments');
+} else {
+  console.log('🔍 SSL disabled for this environment');
 }
+
+console.log('🔍 Final SSL configuration:', JSON.stringify(sslConfig, null, 2));
 
 const knexConfig = {
   client: 'pg',
@@ -45,8 +58,16 @@ const knexConfig = {
   ...(appConfig.isTest ? knexSnakeCaseMappers() : {}),
 };
 
-console.log('🔍 Knex SSL configuration:', sslConfig);
+console.log('🔍 =========================================');
+console.log('🔍 DATABASE CONNECTION DETAILS');
+console.log('🔍 =========================================');
 console.log('🔍 Database host:', appConfig.postgresHost);
 console.log('🔍 Database port:', appConfig.postgresPort);
+console.log('🔍 Database name:', appConfig.postgresDatabase);
+console.log('🔍 Database user:', appConfig.postgresUsername);
+console.log('🔍 Database password:', appConfig.postgresPassword ? '[SET]' : '[NOT SET]');
+console.log('🔍 SSL configuration:', JSON.stringify(sslConfig, null, 2));
+console.log('🔍 Pool configuration:', JSON.stringify(knexConfig.pool, null, 2));
+console.log('🔍 =========================================');
 
 export default knexConfig;
