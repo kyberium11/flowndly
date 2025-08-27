@@ -6,8 +6,10 @@
     "scripts": {
         "start": "cd packages/backend && yarn start",
         "dev": "cd packages/backend && yarn dev",
+        "build": "cd packages/backend && yarn build",
         "migrate": "cd packages/backend && yarn db:migrate",
-        "seed": "cd packages/backend && yarn db:seed:user"
+        "seed": "cd packages/backend && yarn db:seed:user",
+        "vercel-build": "cd packages/backend && yarn install && yarn build"
     },
     "engines": {
         "node": ">=18.0.0",
@@ -18,7 +20,8 @@
         "automation",
         "nodejs",
         "postgresql",
-        "redis"
+        "redis",
+        "vercel"
     ],
     "author": "Flowndly Team",
     "license": "MIT",

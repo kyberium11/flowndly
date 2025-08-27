@@ -1,4 +1,4 @@
-# Flowndly - Open Source Zapier Alternative
+# 🚀 Flowndly - Open Source Zapier Alternative
 
 ![Flowndly - Screenshot](https://user-images.githubusercontent.com/2501931/191562539-e42f6c34-03c7-4dc4-bcf9-7f9473a9c64f.png)
 
@@ -6,7 +6,7 @@
 
 💸 Automating your workflows doesn't have to be a difficult or expensive process. You also don't need any programming knowledge to use Flowndly.
 
-## Advantages
+## ✨ Advantages
 
 There are other existing solutions in the market, like Zapier and Integromat, so you might be wondering why you should use Flowndly.
 
@@ -16,7 +16,38 @@ There are other existing solutions in the market, like Zapier and Integromat, so
 
 💙 No vendor lock-in. If you ever decide that Flowndly is no longer helpful for your business, you can switch to any other provider, which will be easier than switching from the one cloud provider to another since you have all data and flexibility.
 
-## Installation
+## 🚀 Quick Deploy
+
+### Deploy to Vercel (Recommended)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/kyberium11/flowndly)
+
+1. Click the deploy button above
+2. Connect your GitHub account
+3. Set up your database and Redis (see deployment guide)
+4. Configure environment variables
+5. Deploy!
+
+### Manual Setup
+
+See [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) for detailed deployment instructions.
+
+## 🏗️ Architecture
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Vercel App    │    │   PostgreSQL    │    │     Redis       │
+│   (Main API)    │◄──►│   Database      │    │   Cache/Queue   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │
+         ▼
+┌─────────────────┐
+│   Vercel Cron   │
+│   (Worker)      │
+└─────────────────┘
+```
+
+## 🔧 Local Development
 
 ```bash
 # Clone the repository
@@ -25,24 +56,19 @@ git clone https://github.com/kyberium11/flowndly.git
 # Go to the repository folder
 cd flowndly
 
-# Start
-docker compose up
+# Install dependencies
+yarn install
+
+# Start development server
+yarn dev
 ```
 
 You can use `user@automatisch.io` email address and `sample` password to login to Flowndly. Please do not forget to change your email and password from the settings page.
 
-For other installation types, you can check the deployment guides in this repository.
+## 📚 Documentation
 
-## Deployment
-
-Flowndly can be deployed to various platforms:
-
-- **Render**: One-click deployment with managed databases
-- **Railway**: Simple Docker deployment
-- **DigitalOcean**: Docker-native platform
-- **VPS**: Full control with Docker Compose
-
-See the deployment guides in this repository for detailed instructions.
+- [Vercel Deployment Guide](./VERCEL_DEPLOYMENT.md) - Complete deployment instructions
+- [API Documentation](./packages/docs/) - API reference and examples
 
 ## Support
 
