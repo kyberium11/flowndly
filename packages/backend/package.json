@@ -8,6 +8,7 @@
     "worker": "nodemon --loader ./alias-loader.mjs src/worker.js",
     "start": "node --loader ./alias-loader.mjs src/server.js",
     "start:worker": "node --loader ./alias-loader.mjs src/worker.js",
+    "build": "echo 'Build completed - no build step required'",
     "pretest": "APP_ENV=test node --loader ./alias-loader.mjs ./test/setup/prepare-test-env.js",
     "test": "APP_ENV=test node --loader ./alias-loader.mjs ./node_modules/.bin/vitest run",
     "test:watch": "APP_ENV=test node --loader ./alias-loader.mjs ./node_modules/.bin/vitest watch",

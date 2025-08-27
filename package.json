@@ -9,7 +9,7 @@
         "build": "cd packages/backend && yarn build",
         "migrate": "cd packages/backend && yarn db:migrate",
         "seed": "cd packages/backend && yarn db:seed:user",
-        "vercel-build": "cd packages/backend && yarn install && yarn build"
+        "vercel-build": "cd packages/backend && yarn install"
     },
     "engines": {
         "node": ">=18.0.0",
