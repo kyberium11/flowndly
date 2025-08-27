@@ -23,6 +23,7 @@ RUN \
 
 COPY ./docker/entrypoint.sh /entrypoint.sh
 COPY ./docker/railway-entrypoint.sh /railway-entrypoint.sh
+RUN chmod +x /railway-entrypoint.sh
 
 EXPOSE 3000
-ENTRYPOINT ["sh", "/railway-entrypoint.sh"]
+ENTRYPOINT ["/railway-entrypoint.sh"]

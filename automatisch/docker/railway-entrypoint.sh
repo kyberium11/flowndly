@@ -340,15 +340,23 @@ if [ -n "$WORKER" ]; then
   echo "🔍 WORKER environment variable: $WORKER"
   yarn start:worker
 else
-  echo "🗄️ Running database migrations..."
+  echo "🗄️ Attempting database migrations..."
   echo "🔍 Migration command: yarn db:migrate"
-  yarn db:migrate
+  if yarn db:migrate; then
+    echo "✅ Database migrations completed successfully"
+  else
+    echo "⚠️ Database migrations failed, but continuing..."
+  fi
   
-  echo "👤 Seeding user..."
+  echo "👤 Attempting to seed user..."
   echo "🔍 Seed command: yarn db:seed:user"
-  yarn db:seed:user
+  if yarn db:seed:user; then
+    echo "✅ User seeding completed successfully"
+  else
+    echo "⚠️ User seeding failed, but continuing..."
+  fi
   
   echo "🚀 Starting main application..."
   echo "🔍 Start command: yarn start"
-  yarn start
+  exec yarn start
 fi
