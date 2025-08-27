@@ -192,6 +192,18 @@ if [ -n "$DATABASE_URL" ]; then
   export POSTGRES_DATABASE=$DB_NAME
   export POSTGRES_USERNAME=$DB_USER
   export POSTGRES_PASSWORD=$DB_PASS
+  
+  # Modify DATABASE_URL to include SSL parameters for Railway
+  echo "🔍 Modifying DATABASE_URL to include SSL parameters..."
+  if [[ "$DATABASE_URL" == *"?"* ]]; then
+    # URL already has parameters, add SSL parameter
+    export DATABASE_URL="${DATABASE_URL}&sslmode=require&sslcert=&sslkey=&sslrootcert="
+  else
+    # URL has no parameters, add SSL parameters
+    export DATABASE_URL="${DATABASE_URL}?sslmode=require&sslcert=&sslkey=&sslrootcert="
+  fi
+  echo "🔍 Modified DATABASE_URL: $DATABASE_URL"
+  
   # Enable SSL with rejectUnauthorized: false for Railway (official solution)
   export POSTGRES_ENABLE_SSL=true
   echo "🔍 Enabled SSL with rejectUnauthorized: false for Railway (official solution)"
@@ -253,6 +265,7 @@ echo "   POSTGRES_DATABASE: $POSTGRES_DATABASE"
 echo "   POSTGRES_USERNAME: $POSTGRES_USERNAME"
 echo "   POSTGRES_PASSWORD: [hidden]"
 echo "   POSTGRES_ENABLE_SSL: $POSTGRES_ENABLE_SSL"
+echo "   DATABASE_URL: $DATABASE_URL"
 echo ""
 echo "🔍 Redis Configuration:"
 echo "   REDIS_HOST: $REDIS_HOST"

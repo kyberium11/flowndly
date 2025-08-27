@@ -34,16 +34,38 @@ if (process.env.APP_ENV === 'production' && process.env.DATABASE_URL) {
 
 console.log('🔍 Final SSL configuration:', JSON.stringify(sslConfig, null, 2));
 
+// Create connection object with explicit SSL configuration
+const connectionConfig = {
+  host: appConfig.postgresHost,
+  port: appConfig.postgresPort,
+  user: appConfig.postgresUsername,
+  password: appConfig.postgresPassword,
+  database: appConfig.postgresDatabase,
+};
+
+// Add SSL configuration if needed
+if (sslConfig) {
+  connectionConfig.ssl = sslConfig;
+  console.log('🔍 SSL configuration added to connection');
+} else {
+  console.log('🔍 No SSL configuration added to connection');
+}
+
+// Try alternative SSL configuration for Railway
+if (process.env.APP_ENV === 'production' && process.env.DATABASE_URL) {
+  console.log('🔍 Adding Railway-specific SSL configuration...');
+  connectionConfig.ssl = {
+    rejectUnauthorized: false,
+    ca: undefined,
+    key: undefined,
+    cert: undefined
+  };
+  console.log('🔍 Railway SSL config applied:', JSON.stringify(connectionConfig.ssl, null, 2));
+}
+
 const knexConfig = {
   client: 'pg',
-  connection: {
-    host: appConfig.postgresHost,
-    port: appConfig.postgresPort,
-    user: appConfig.postgresUsername,
-    password: appConfig.postgresPassword,
-    database: appConfig.postgresDatabase,
-    ssl: sslConfig,
-  },
+  connection: connectionConfig,
   asyncStackTraces: appConfig.isDev,
   searchPath: [appConfig.postgresSchema],
   pool: { min: 0, max: 20 },
@@ -68,6 +90,11 @@ console.log('🔍 Database user:', appConfig.postgresUsername);
 console.log('🔍 Database password:', appConfig.postgresPassword ? '[SET]' : '[NOT SET]');
 console.log('🔍 SSL configuration:', JSON.stringify(sslConfig, null, 2));
 console.log('🔍 Pool configuration:', JSON.stringify(knexConfig.pool, null, 2));
+console.log('🔍 Final connection config:', JSON.stringify(connectionConfig, null, 2));
+
+// Show what the connection string would look like (without password)
+const connectionString = `postgresql://${appConfig.postgresUsername}:[PASSWORD]@${appConfig.postgresHost}:${appConfig.postgresPort}/${appConfig.postgresDatabase}`;
+console.log('🔍 Connection string format:', connectionString);
 console.log('🔍 =========================================');
 
 export default knexConfig;
