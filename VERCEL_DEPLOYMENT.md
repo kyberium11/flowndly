@@ -21,8 +21,11 @@ This guide will help you deploy Flowndly to Vercel with all services (PostgreSQL
 ┌─────────────────┐
 │   Vercel Cron   │
 │   (Worker)      │
+│   Daily @ UTC   │
 └─────────────────┘
 ```
+
+**Note:** Hobby accounts run the worker once daily at midnight UTC. Pro accounts can run more frequently.
 
 ## 🔧 Setup Instructions
 
@@ -140,11 +143,13 @@ export default async function handler(req, res) {
   "crons": [
     {
       "path": "/api/cron",
-      "schedule": "*/5 * * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
 ```
+
+**Note:** Hobby accounts are limited to daily cron jobs. The worker will run once per day at midnight UTC. Upgrade to Pro plan for more frequent cron jobs.
 
 ### 5. Deploy to Vercel
 
