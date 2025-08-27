@@ -1,0 +1,29 @@
+{
+    "name": "flowndly",
+    "version": "1.0.0",
+    "description": "Flowndly - Workflow Automation Platform",
+    "main": "packages/backend/src/server.js",
+    "scripts": {
+        "start": "cd packages/backend && yarn start",
+        "dev": "cd packages/backend && yarn dev",
+        "migrate": "cd packages/backend && yarn db:migrate",
+        "seed": "cd packages/backend && yarn db:seed:user"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=8.0.0"
+    },
+    "keywords": [
+        "workflow",
+        "automation",
+        "nodejs",
+        "postgresql",
+        "redis"
+    ],
+    "author": "Flowndly Team",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/kyberium11/flowndly.git"
+    }
+}
