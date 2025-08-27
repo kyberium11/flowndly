@@ -179,6 +179,12 @@ if [ -n "$DATABASE_URL" ]; then
   DB_USER=$(echo $DATABASE_URL | sed -n 's/.*:\/\/\([^:]*\):.*/\1/p')
   DB_PASS=$(echo $DATABASE_URL | sed -n 's/.*:\/\/[^:]*:\([^@]*\)@.*/\1/p')
   
+  # Ensure we're using Railway internal hostnames
+  if [[ "$DB_HOST" == "localhost" || "$DB_HOST" == "127.0.0.1" ]]; then
+    echo "⚠️ Detected localhost in DATABASE_URL, this might cause issues in Railway"
+    echo "🔍 Original DB_HOST: $DB_HOST"
+  fi
+  
   echo "🔍 Extracted database components:"
   echo "   DB_HOST: $DB_HOST"
   echo "   DB_PORT: $DB_PORT"
@@ -250,8 +256,16 @@ elif [ -n "$REDISHOST" ]; then
   fi
 else
   echo "⚠️ No Railway Redis configuration found, using defaults"
+  echo "⚠️ This will likely cause connection issues in Railway!"
   export REDIS_HOST=127.0.0.1
   export REDIS_PORT=6379
+fi
+
+# Ensure we're using Railway internal hostnames for Redis
+if [[ "$REDIS_HOST" == "localhost" || "$REDIS_HOST" == "127.0.0.1" ]]; then
+  echo "⚠️ Detected localhost in Redis configuration, this will cause issues in Railway"
+  echo "🔍 Original REDIS_HOST: $REDIS_HOST"
+  echo "🔍 Please ensure REDISHOST is set to the Railway Redis service internal hostname"
 fi
 
 echo ""
